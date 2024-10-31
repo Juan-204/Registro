@@ -1,4 +1,3 @@
-// src/Form.jsx
 import { useState } from 'react';
 
 const Form = () => {
@@ -10,8 +9,7 @@ const Form = () => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
 
-    // Cambia la URL por la URL de tu backend en Railway
-    const response = await fetch('https://tu-backend-railway-url/api/users', {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,14 +18,14 @@ const Form = () => {
     });
 
     if (response.ok) {
-      console.log('User registered successfully');
+      console.log('Usuario registrado con éxito');
       // Opcional: limpiar el formulario
       setName('');
       setDocumentType('');
       setDocumentNumber('');
       setAssistantType('');
     } else {
-      console.error('Error registering user');
+      console.error('Error al registrar el usuario');
     }
   };
 

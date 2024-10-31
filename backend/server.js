@@ -11,6 +11,9 @@ app.use(express.json()); // Para leer el cuerpo JSON de las peticiones
 // Configura la conexión a PostgreSQL
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Endpoint para registrar usuarios
