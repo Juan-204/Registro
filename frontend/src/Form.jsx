@@ -13,17 +13,19 @@ const Form = () => {
   // Función para obtener usuarios de la base de datos
   const fetchUsuarios = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users`);
-      if (response.ok) {
-        const data = await response.json();
-        setUsuarios(data); // Actualiza el estado con los usuarios de la base de datos
-      } else {
-        console.error('Error al obtener usuarios');
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users-get`);
+      if (!response.ok) {
+        const errorText = await response.text(); // Obtener el texto de error
+        console.error(`Error al obtener usuarios: ${errorText}`);
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
       }
+      const data = await response.json();
+      setUsuarios(data);
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
     }
   };
+  
 
   // Llama a fetchUsuarios cuando el componente se monte
   useEffect(() => {
@@ -53,10 +55,10 @@ const Form = () => {
           assistant_type: formData.TipoAsis,
         }),
       });
-
+  
       if (response.ok) {
         console.log('Usuario registrado con éxito');
-        fetchUsuarios(); // Actualiza la lista de usuarios después de agregar uno nuevo
+        fetchUsuarios(); // Actualiza la lista de usuarios
         setFormData({ nombre: '', tipoDocu: '', numeroDocu: '', TipoAsis: '' });
       } else {
         console.error('Error al registrar el usuario');
@@ -65,6 +67,7 @@ const Form = () => {
       console.error('Error al registrar el usuario:', error);
     }
   };
+  
 
   return (
     <>
