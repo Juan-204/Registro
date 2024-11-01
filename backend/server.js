@@ -18,16 +18,27 @@ const pool = new Pool({
 
 // Endpoint para registrar usuarios
 app.post('/api/users', async (req, res) => {
-  const { name, documentType, documentNumber, assistantType } = req.body;
+  const { name, document_type, document_number, assistant_type } = req.body;
+  
   try {
-    const result = await pool.query(
-      'INSERT INTO users (name, document_type, document_number, assistant_type) VALUES ($1, $2, $3, $4)',
-      [name, documentType, documentNumber, assistantType]
+    await pool.query(
+      'INSERT INTO users (document_type, document_number, assistant_type, name) VALUES ($1, $2, $3, $4)',
+      [document_type, document_number, assistant_type,name]
     );
-    res.status(201).send('User registered');
+    res.status(201).json({ message: 'Usuario registrado con éxito' });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Error registering user');
+    console.error('Error al registrar el usuario:', error);
+    res.status(500).json({ error: 'Error al registrar el usuario' });
+  }
+});
+
+app.get('/api/usersget', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM users');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    res.status(500).json({ error: 'Error al obtener usuarios' });
   }
 });
 
