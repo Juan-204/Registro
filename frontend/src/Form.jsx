@@ -8,6 +8,9 @@ const Form = () => {
     tipoDocu: '',
     numeroDocu: '',
     TipoAsis: '',
+    institucion: '',
+    programaUniversitario: '',
+    gradoEscolar: '',
   });
 
   // Función para obtener usuarios de la base de datos
@@ -53,13 +56,17 @@ const Form = () => {
           document_type: formData.tipoDocu,
           document_number: formData.numeroDocu,
           assistant_type: formData.TipoAsis,
+          institution: formData.institucion,
+          university_program: formData.programaUniversitario,
+          school_grade: formData.gradoEscolar,
         }),
       });
   
       if (response.ok) {
         console.log('Usuario registrado con éxito');
-        fetchUsuarios(); // Actualiza la lista de usuarios
-        setFormData({ nombre: '', tipoDocu: '', numeroDocu: '', TipoAsis: '' });
+        fetchUsuarios(); // Actualiza la lista de usuarios después de agregar uno nuevo
+        setFormData({ nombre: '', tipoDocu: '', numeroDocu: '', TipoAsis: '', institucion: '', programaUniversitario: '', gradoEscolar: '' });
+
       } else {
         console.error('Error al registrar el usuario');
       }
@@ -128,6 +135,50 @@ const Form = () => {
             <MenuItem value='PONENTE'>Ponente</MenuItem>
           </Select>
         </FormControl>
+
+        {formData.TipoAsis === 'ASISTENTE' && (
+          <>
+            <FormControl sx={{ margin: '10px', textAlign: 'start' }}>
+              <InputLabel id='Institucion'>Institución</InputLabel>
+              <Select
+                labelId='Institucion'
+                id='Institucion'
+                label="Institución"
+                name="institucion"
+                value={formData.institucion}
+                onChange={handleChange}
+                required
+              >
+                <MenuItem value='UNIVERSIDAD'>Universidad</MenuItem>
+                <MenuItem value='COLEGIO'>Colegio</MenuItem>
+              </Select>
+            </FormControl>
+
+            {formData.institucion === 'UNIVERSIDAD' && (
+              <FormControl sx={{ margin: '10px' }}>
+                <TextField
+                  label='Programa Universitario'
+                  name='programaUniversitario'
+                  value={formData.programaUniversitario}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
+            )}
+
+            {formData.institucion === 'COLEGIO' && (
+              <FormControl sx={{ margin: '10px' }}>
+                <TextField
+                  label='Grado Escolar'
+                  name='gradoEscolar'
+                  value={formData.gradoEscolar}
+                  onChange={handleChange}
+                  required
+                />
+              </FormControl>
+            )}
+          </>
+        )}
         
         <Button type='submit'>Guardar</Button>
       </Box>
@@ -140,6 +191,9 @@ const Form = () => {
               <TableCell>Tipo de Documento</TableCell>
               <TableCell>Número Documento</TableCell>
               <TableCell>Tipo de Asistente</TableCell>
+              <TableCell>Institución</TableCell>
+              <TableCell>Programa Universitario</TableCell>
+              <TableCell>Grado Escolar</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -149,6 +203,9 @@ const Form = () => {
                 <TableCell>{usuario.document_type}</TableCell>
                 <TableCell>{usuario.document_number}</TableCell>
                 <TableCell>{usuario.assistant_type}</TableCell>
+                <TableCell>{usuario.institution || '-'}</TableCell>
+                <TableCell>{usuario.university_program || '-'}</TableCell>
+                <TableCell>{usuario.school_grade || '-'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
