@@ -18,12 +18,12 @@ const pool = new Pool({
 
 // Endpoint para registrar usuarios
 app.post('/api/users', async (req, res) => {
-  const { name, document_type, document_number, assistant_type, institucion, programaUniversitario, gradoEscolar} = req.body;
+  const { name, document_type, document_number, assistant_type, program, campus,institution, typeSector, nameEnterprise, contact1,  contact2 } = req.body;
   
   try {
     await pool.query(
-      'INSERT INTO users (document_type, document_number, assistant_type, name, institucion, programaUniversitario, gradoEscolar) VALUES ($1, $2, $3, $4, $5 , $6, $7)',
-      [document_type, document_number, assistant_type,name, institucion, programaUniversitario, gradoEscolar]
+      'INSERT INTO users (document_type, document_number, assistant_type, name, program,	campus,	institution,	type_sector,	name_enterprise,	contac1,	contact_2) VALUES ($1, $2, $3, $4, $5 , $6, $7, $8, $9, $10, $11)',
+      [document_type, document_number, assistant_type, name, program, campus,institution, typeSector, nameEnterprise, contact1,  contact2 ]
     );
     res.status(201).json({ message: 'Usuario registrado con éxito' });
   } catch (error) {
