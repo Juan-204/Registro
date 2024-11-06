@@ -1,54 +1,4 @@
 // backend/server.js
-/*const express = require('express');
-const cors = require('cors');
-const { Pool } = require('pg');
-require('dotenv').config();
-
-const app = express();
-app.use(cors());
-app.use(express.json()); // Para leer el cuerpo JSON de las peticiones
-
-// Configura la conexión a PostgreSQL
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
-});
-
-// Endpoint para registrar usuarios
-app.post('/api/users', async (req, res) => {
-  const { name, document_type, document_number, assistant_type, program, campus,institution, typeSector, nameEnterprise, contact1,  contact2 } = req.body;
-  
-  try {
-    await pool.query(
-      'INSERT INTO users (document_type, document_number, assistant_type, name, program,	campus,	institution,	type_sector,	name_enterprise,	contac1,	contact_2) VALUES ($1, $2, $3, $4, $5 , $6, $7, $8, $9, $10, $11)',
-      [document_type, document_number, assistant_type, name, program, campus,institution, typeSector, nameEnterprise, contact1,  contact2 ]
-    );
-    res.status(201).json({ message: 'Usuario registrado con éxito' });
-  } catch (error) {
-    console.error('Error al registrar el usuario:', error);
-    res.status(500).json({ error: 'Error al registrar el usuario' });
-  }
-});
-
-app.get('/api/usersget', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM users');
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error al obtener usuarios:', error);
-    res.status(500).json({ error: 'Error al obtener usuarios' });
-  }
-});
-
-// Configurar el puerto
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-*/
-// backend/server.js
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -68,11 +18,13 @@ const pool = new Pool({
 
 // Endpoint para registrar usuarios
 app.post('/api/users', async (req, res) => {
-  const { name, document_type, document_number, assistant_type, program, campus,institution, type_sector, name_enterprise, contac1,  contact_2 } = req.body;  try {
+  const { name, documentType, documentNumber, assistantType, program, campus, institution, typeSector, nameEnterprise, contact1, contact2 } = req.body;  
+  try {
     const result = await pool.query(
-      'INSERT INTO users (document_type, document_number, assistant_type, name, program,	campus,	institution,	type_sector,	name_enterprise,	contac1,	contact_2) VALUES ($1, $2, $3, $4, $5 , $6, $7, $8, $9, $10, $11)',
-      [name, document_type, document_number, assistant_type, program, campus, institution, type_sector, name_enterprise, contac1, contact_2]
+      'INSERT INTO users (name, document_type, document_number, assistant_type, program, campus, institution, type_sector, name_enterprise, contact1, contact2) VALUES ($1, $2, $3, $4, $5 , $6, $7, $8, $9, $10, $11)',
+      [name, documentType, documentNumber, assistantType, program, campus, institution, typeSector, nameEnterprise, contact1, contact2]
     );
+    
     res.status(201).send('User registered');
   } catch (error) {
     console.error(error);

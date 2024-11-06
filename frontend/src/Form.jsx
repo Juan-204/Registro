@@ -10,7 +10,7 @@ const Form = () => {
   const [institution ,setInstitution] = useState('');
   const [typeSector,setTypeSector] = useState('');
   const [nameEnterprise,setNameEnterprise] = useState('');
-  const [contact1,setContact1] = useState('');
+  const [contac1,setContac1] = useState('');
   const [contact2,setContact2] = useState('');
 
   const handleSubmit = async (e) => {
@@ -21,8 +21,21 @@ const Form = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, documentType, documentNumber, assistantType, program, campus,institution, typeSector, nameEnterprise, contact1,  contact2 }),
+      body: JSON.stringify({ 
+        name, 
+        document_type: documentType,  // Cambia a document_type
+        document_number: documentNumber, // Cambia a document_number
+        assistant_type: assistantType,  // Cambia a assistant_type
+        program, 
+        campus, 
+        institution, 
+        type_sector: typeSector, // Cambia a type_sector
+        name_enterprise: nameEnterprise, // Cambia a name_enterprise
+        contac1, 
+        contact_2: contact2,
+      }),
     });
+    
 
     if (response.ok) {
       console.log('Usuario registrado con éxito');
@@ -36,7 +49,7 @@ const Form = () => {
       setInstitution('');
       setTypeSector('');
       setNameEnterprise('');
-      setContact1('');
+      setContac1('');
       setContact2('');
       } else {
       console.error('Error al registrar el usuario');
@@ -110,8 +123,8 @@ const Form = () => {
       />
       <input
         type="text"
-        value={contact1}
-        onChange={(e) => setContact1(e.target.value)}
+        value={contac1}
+        onChange={(e) => setContac1(e.target.value)}
         placeholder="Contacto 1"
         required
       />
