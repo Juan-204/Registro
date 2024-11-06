@@ -32,6 +32,24 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
+//End Point para buscar usuarios
+app.post('/buscar-usuario', async (req, res) => {
+  const { numeroDocu } = req.body;
+  try {
+      const usuario = await pool.query('SELECT * FROM users WHERE document_number = $1', [numeroDocu]);
+      
+      if (usuario.rows.length > 0) {
+          res.json(usuario.rows[0]); // Enviar el usuario encontrado
+      } else {
+          res.status(404).send('Usuario no encontrado');
+      }
+  } catch (error) {
+      console.error('Error al buscar usuario:', error);
+      res.status(500).send('Error del servidor');
+  }
+});
+
+
 // Configurar el puerto
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
