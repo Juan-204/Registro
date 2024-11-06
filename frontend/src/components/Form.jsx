@@ -1,9 +1,9 @@
 import { Typography, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
-import { useEffect, useState } from 'react';
-import './App.css';
+import { useState } from 'react';
+import '../App.css';
 
 function Registro() {
-    const [usuarios, setUsuarios] = useState([]);
+    //const [usuarios, setUsuarios] = useState([]);
     const [formData, setFormData] = useState({
         nombre: '',
         tipoDocu: '',
@@ -14,12 +14,12 @@ function Registro() {
         campus: '',
         contac1: '',
         contacto2: '',
-        correoElectronico: '',
         sectorExterno: '',
         empresaNombre: '',
         tipoSector: ''
     });
-    const [editIndex, setEditIndex] = useState(null);
+    
+    //const [editIndex, setEditIndex] = useState(null);
 
     const programas = [
         'TECNOLOGÍA EN DESARROLLO DE SOFTWARE',
@@ -33,12 +33,12 @@ function Registro() {
         'SEDE CAICEDONIA',
         'NODO SEVILLA'
     ];
-
+/*
     useEffect(() => {
         const usuariosGuardados = JSON.parse(localStorage.getItem('usuarios')) || [];
         setUsuarios(usuariosGuardados);
     }, []);
-
+*/
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -67,7 +67,6 @@ function Registro() {
                 name_enterprise: formData.empresaNombre,
                 contac1: formData.contac1,
                 contact_2: formData.contacto2,
-                email: formData.correoElectronico
             }),
         });
 
@@ -83,7 +82,6 @@ function Registro() {
                 campus: '',
                 contac1: '',
                 contacto2: '',
-                correoElectronico: '',
                 sectorExterno: '',
                 empresaNombre: '',
                 tipoSector: ''
@@ -172,17 +170,12 @@ function Registro() {
             )}
 
             <FormControl sx={{ margin: '10px' }}>
-                <TextField label="Contacto 1" name="contacto1" value={formData.contac1} onChange={handleChange} />
+                <TextField label="Contacto 1" name="contac1" value={formData.contac1} onChange={handleChange} />
             </FormControl>
 
             <FormControl sx={{ margin: '10px' }}>
                 <TextField label="Contacto 2" name="contacto2" value={formData.contacto2} onChange={handleChange} />
             </FormControl>
-
-            <FormControl sx={{ margin: '10px' }}>
-                <TextField label="Correo Electrónico" name="correoElectronico" value={formData.correoElectronico} onChange={handleChange} />
-            </FormControl>
-
             <Button type="submit" variant="contained">Guardar</Button>
         </Box>
     );
