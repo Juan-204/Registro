@@ -174,12 +174,13 @@ function Registro() {
                         toast.error("El correo electronico ya esta registrado")
                     }else {
                         toast.error("Error al registrar el usuario")
-                        throw new Error("Error al registrar el usuario");
+                        //throw new Error("Error al registrar el usuario");
                     }
                 }
             }
         } catch (error) {
             toast.error(error.message);
+            toast.error("Hubo un error al procesar la solicitud");
         }
     };
 
