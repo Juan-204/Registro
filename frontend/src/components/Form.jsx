@@ -169,7 +169,13 @@ function Registro() {
                     toast.success("Usuario registrado con éxito");
                     reset();
                 } else {
-                    throw new Error("Error al registrar el usuario");
+                    const errorData = await response.json();
+                    if(errorData.error === 'El correo electrónico ya está registrado'){
+                        toast.error("El correo electronico ya esta registrado")
+                    }else {
+                        toast.error("Error al registrar el usuario")
+                        throw new Error("Error al registrar el usuario");
+                    }
                 }
             }
         } catch (error) {
