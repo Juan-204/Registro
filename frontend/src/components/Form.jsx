@@ -1,5 +1,4 @@
 import { Typography, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
-import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -139,6 +138,7 @@ function Registro() {
 
             if (response.ok) {
                 const user = await response.json();
+                console.log(user)
                 toast.error("El número de documento ya está registrado.");
                 toast.dismiss(verificando)
             } else {
@@ -180,6 +180,7 @@ function Registro() {
             }
         } catch (error) {
             toast.dismiss();
+            console.log(error)
             toast.error("Hubo un error al procesar la solicitud");
         }
     };
@@ -189,7 +190,7 @@ function Registro() {
         <ToastContainer
         pauseOnHover/>
         <Box className="shadow-2xl rounded-2xl flex flex-col w-[40rem]" component="form" onSubmit={handleSubmit(onSubmit)}>
-            <Typography className="text-4xl">Asistencia Eventos Univalle</Typography>
+            <Typography class="text-4xl">Preinscripción evento semana de la ingeniería</Typography>
 
             <Controller
                 name="nombre"
