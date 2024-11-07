@@ -189,7 +189,7 @@ function Registro() {
         <>
         <ToastContainer
         pauseOnHover/>
-        <Box className="shadow-2xl rounded-2xl flex flex-col w-[40rem]" component="form" onSubmit={handleSubmit(onSubmit)}>
+        <Box className="shadow-2xl rounded-2xl max-w-[23rem] mx-auto flex flex-col w-[40rem]" component="form" onSubmit={handleSubmit(onSubmit)}>
             <Typography class="text-4xl">Preinscripción evento semana de la ingeniería</Typography>
 
             <Controller
