@@ -19,6 +19,13 @@ const pool = new Pool({
 // Endpoint para registrar usuarios
 app.post('/api/users', async (req, res) => {
   const { name, document_type, document_number, email , assistant_type, program, campus, institution, type_sector, name_enterprise, contac1, contact_2 } = req.body;  
+  
+  const checkEmail = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+
+  if (checkEmail.rows.length > 0) {
+    return res.status(400).json({ error: 'El correo electrónico ya está registrado' });
+  }
+  
   try {
     const result = await pool.query(
       'INSERT INTO users (name, document_type, document_number, email , assistant_type, program, campus, institution, type_sector, name_enterprise, contac1, contact_2) VALUES ($1, $2, $3, $4, $5 , $6, $7, $8, $9, $10, $11, $12)',
@@ -48,6 +55,8 @@ app.post('/buscar-usuario', async (req, res) => {
       res.status(500).send('Error del servidor');
   }
 });
+
+
 
 
 // Configurar el puerto
