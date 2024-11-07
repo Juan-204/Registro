@@ -1,26 +1,89 @@
 import { Typography, Box, TextField, Select, MenuItem, InputLabel, FormControl, Button } from '@mui/material';
 import { useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import '../App.css';
 
-function Registro() {
-    //const [usuarios, setUsuarios] = useState([]);
-    const [formData, setFormData] = useState({
-        nombre: '',
-        tipoDocu: '',
-        numeroDocu: '',
-        tipoAsis: '',
-        institucion: '',
-        programa: '',
-        campus: '',
-        contac1: '',
-        contacto2: '',
-        sectorExterno: '',
-        empresaNombre: '',
-        tipoSector: ''
-    });
+// Esquema de validación usando Yup
+const schema = yup.object().shape({
+    nombre: yup
+        .string()
+        .required("El nombre es obligatorio")
+        .matches(/^[A-Za-z\s]+$/, "Solo se permiten letras en el nombre"),
     
-    //const [editIndex, setEditIndex] = useState(null);
+    tipoDocu: yup
+        .string()
+        .required("Seleccione un tipo de documento"),
+    
+    numeroDocu: yup
+        .string()
+        .required("El número de documento es obligatorio")
+        .matches(/^[0-9]+$/, "Debe ser un número válido")
+        .min(6, "Debe tener al menos 6 dígitos"),
+    
+    tipoAsis: yup
+        .string()
+        .required("Seleccione un tipo de asistente"),
 
+    institucion: yup
+        .string()
+        .when("tipoAsis", (tipoAsis, schema) =>
+            ["DOCENTE", "EXPOSITOR", "PONENTE", "LOGISTICA"].includes(tipoAsis)
+                ? schema
+                    .required("La institución es obligatoria para este tipo de asistente")
+                    .matches(/^[A-Za-z\s]+$/, "Solo se permiten letras en el nombre de la institución")
+                : schema.notRequired()
+        ),
+
+    programa: yup
+        .string()
+        .when("tipoAsis", (tipoAsis, schema) =>
+            tipoAsis === "ESTUDIANTE"
+                ? schema.required("El programa es obligatorio para estudiantes")
+                : schema.notRequired()
+        ),
+    
+    campus: yup
+        .string()
+        .when("tipoAsis", (tipoAsis, schema) =>
+            tipoAsis === "ESTUDIANTE"
+                ? schema.required("El campus es obligatorio para estudiantes")
+                : schema.notRequired()
+        ),
+    
+    tipoSector: yup
+        .string()
+        .when("tipoAsis", (tipoAsis, schema) =>
+            tipoAsis === "SECTOR_EXTERNO"
+                ? schema.required("Seleccione un tipo de sector")
+                : schema.notRequired()
+        ),
+    
+    empresaNombre: yup
+        .string()
+        .when("tipoAsis", (tipoAsis, schema) =>
+            tipoAsis === "SECTOR_EXTERNO"
+                ? schema
+                    .required("El nombre de la empresa es obligatorio")
+                    .matches(/^[A-Za-z\s]+$/, "Solo se permiten letras en el nombre de la empresa")
+                : schema.notRequired()
+        ),
+
+    contac1: yup
+        .string()
+        .required("El contacto 1 es obligatorio")
+        .matches(/^[0-9]+$/, "Debe ser un número de contacto válido")
+        .min(7, "El contacto debe tener al menos 7 dígitos"),
+    
+    contacto2: yup
+        .string()
+        .matches(/^[0-9]*$/, "Debe ser un número de contacto válido")
+});
+
+function Registro() {
     const programas = [
         'TECNOLOGÍA EN DESARROLLO DE SOFTWARE',
         'TECNOLOGÍA AGROAMBIENTAL',
@@ -33,150 +96,220 @@ function Registro() {
         'SEDE CAICEDONIA',
         'NODO SEVILLA'
     ];
-/*
-    useEffect(() => {
-        const usuariosGuardados = JSON.parse(localStorage.getItem('usuarios')) || [];
-        setUsuarios(usuariosGuardados);
-    }, []);
-*/
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const { control, handleSubmit, reset, watch } = useForm({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            nombre: '',
+            tipoDocu: '',
+            numeroDocu: '',
+            tipoAsis: '',
+            institucion: '',
+            programa: '',
+            campus: '',
+            contac1: '',
+            contacto2: '',
+            tipoSector: '',
+            empresaNombre: ''
+        }
+    });
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: formData.nombre,
-                document_type: formData.tipoDocu,
-                document_number: formData.numeroDocu,
-                assistant_type: formData.tipoAsis,
-                program: formData.programa,
-                campus: formData.campus,
-                institution: formData.institucion,
-                type_sector: formData.tipoSector,
-                name_enterprise: formData.empresaNombre,
-                contac1: formData.contac1,
-                contact_2: formData.contacto2,
-            }),
-        });
+    const tipoAsis = watch("tipoAsis");
 
-        if (response.ok) {
-            console.log('Usuario registrado con éxito');
-            setFormData({
-                nombre: '',
-                tipoDocu: '',
-                numeroDocu: '',
-                tipoAsis: '',
-                institucion: '',
-                programa: '',
-                campus: '',
-                contac1: '',
-                contacto2: '',
-                sectorExterno: '',
-                empresaNombre: '',
-                tipoSector: ''
+    const onSubmit = async (data) => {
+        toast.loading("Enviando datos...");
+
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: data.nombre,
+                    document_type: data.tipoDocu,
+                    document_number: data.numeroDocu,
+                    assistant_type: data.tipoAsis,
+                    program: data.programa,
+                    campus: data.campus,
+                    institution: data.institucion,
+                    type_sector: data.tipoSector,
+                    name_enterprise: data.empresaNombre,
+                    contac1: data.contac1,
+                    contact_2: data.contacto2,
+                }),
             });
-        } else {
-            console.error('Error al registrar el usuario');
+
+            toast.dismiss();
+
+            if (response.ok) {
+                toast.success("Usuario registrado con éxito");
+                reset();
+            } else {
+                throw new Error("Error al registrar el usuario");
+            }
+        } catch (error) {
+            toast.error(error.message);
         }
     };
 
     return (
-        <Box className="shadow-2xl rounded-2xl flex flex-col w-[40rem]" component="form" onSubmit={handleSubmit}>
+        <Box className="shadow-2xl rounded-2xl flex flex-col w-[40rem]" component="form" onSubmit={handleSubmit(onSubmit)}>
             <Typography className="text-4xl">Asistencia Eventos Univalle</Typography>
-            
-            <FormControl sx={{ margin: '10px' }}>
-                <TextField label="Nombre Completo" name="nombre" value={formData.nombre} onChange={handleChange} required />
-            </FormControl>
 
-            <FormControl sx={{ margin: '10px'}}>
-                <InputLabel>Tipo de Documento</InputLabel>
-                <Select label='Tipo de Documento' name="tipoDocu" value={formData.tipoDocu} onChange={handleChange} required>
-                    <MenuItem value="CC">Cédula de Ciudadanía</MenuItem>
-                    <MenuItem value="TI">Tarjeta de Identidad</MenuItem>
-                    <MenuItem value="CE">Cédula de Extranjería</MenuItem>
-                </Select>
-            </FormControl>
+            <Controller
+                name="nombre"
+                control={control}
+                render={({ field, fieldState }) => (
+                    <FormControl sx={{ margin: '10px' }}>
+                        <TextField {...field} label="Nombre Completo" error={!!fieldState.error} helperText={fieldState.error?.message} required />
+                    </FormControl>
+                )}
+            />
 
-            <FormControl sx={{ margin: '10px' }}>
-                <TextField label="Número de Documento" name="numeroDocu" value={formData.numeroDocu} onChange={handleChange} required />
-            </FormControl>
+            <Controller
+                name="tipoDocu"
+                control={control}
+                render={({ field, fieldState }) => (
+                    <FormControl sx={{ margin: '10px' }} error={!!fieldState.error}>
+                        <InputLabel>Tipo de Documento</InputLabel>
+                        <Select {...field} label="Tipo de Documento" required>
+                            <MenuItem value="CC">Cédula de Ciudadanía</MenuItem>
+                            <MenuItem value="TI">Tarjeta de Identidad</MenuItem>
+                            <MenuItem value="CE">Cédula de Extranjería</MenuItem>
+                        </Select>
+                        {fieldState.error && <Typography color="error">{fieldState.error.message}</Typography>}
+                    </FormControl>
+                )}
+            />
 
-            <FormControl sx={{ margin: '10px'}}>
-                <InputLabel>Tipo de Asistente</InputLabel>
-                <Select label="Tipo de Asistente" name="tipoAsis" value={formData.tipoAsis} onChange={handleChange} required>
-                    <MenuItem value="ESTUDIANTE">Estudiante</MenuItem>
-                    <MenuItem value="DOCENTE">Docente</MenuItem>
-                    <MenuItem value="EXPOSITOR">Expositor</MenuItem>
-                    <MenuItem value="PONENTE">Ponente</MenuItem>
-                    <MenuItem value="LOGISTICA">Logística</MenuItem>
-                    <MenuItem value="SECTOR_EXTERNO">Sector Externo</MenuItem>
-                </Select>
-            </FormControl>
+            <Controller
+                name="numeroDocu"
+                control={control}
+                render={({ field, fieldState }) => (
+                    <FormControl sx={{ margin: '10px' }}>
+                        <TextField {...field} label="Número de Documento" error={!!fieldState.error} helperText={fieldState.error?.message} required />
+                    </FormControl>
+                )}
+            />
 
-            {(formData.tipoAsis === 'DOCENTE' || formData.tipoAsis === 'EXPOSITOR' || formData.tipoAsis === 'PONENTE' || formData.tipoAsis === 'LOGISTICA') && (
-                <FormControl sx={{ margin: '10px' }}>
-                    <TextField label="Nombre de la Institución" name="institucion" value={formData.institucion} onChange={handleChange} />
-                </FormControl>
+            <Controller
+                name="tipoAsis"
+                control={control}
+                render={({ field, fieldState }) => (
+                    <FormControl sx={{ margin: '10px' }} error={!!fieldState.error}>
+                        <InputLabel>Tipo de Asistente</InputLabel>
+                        <Select {...field} label="Tipo de Asistente" required>
+                            <MenuItem value="ESTUDIANTE">Estudiante</MenuItem>
+                            <MenuItem value="DOCENTE">Docente</MenuItem>
+                            <MenuItem value="EXPOSITOR">Expositor</MenuItem>
+                            <MenuItem value="PONENTE">Ponente</MenuItem>
+                            <MenuItem value="LOGISTICA">Logística</MenuItem>
+                            <MenuItem value="SECTOR_EXTERNO">Sector Externo</MenuItem>
+                        </Select>
+                        {fieldState.error && <Typography color="error">{fieldState.error.message}</Typography>}
+                    </FormControl>
+                )}
+            />
+
+            {["DOCENTE", "EXPOSITOR", "PONENTE", "LOGISTICA"].includes(tipoAsis) && (
+                <Controller
+                    name="institucion"
+                    control={control}
+                    render={({ field, fieldState }) => (
+                        <FormControl sx={{ margin: '10px' }}>
+                            <TextField {...field} label="Nombre de la Institución" error={!!fieldState.error} helperText={fieldState.error?.message} />
+                        </FormControl>
+                    )}
+                />
             )}
 
-            {formData.tipoAsis === 'ESTUDIANTE' && (
+            {tipoAsis === 'ESTUDIANTE' && (
                 <>
-                    <FormControl sx={{ margin: '10px'}}>
-                        <InputLabel>Programa</InputLabel>
-                        <Select label="programa" name="programa" value={formData.programa} onChange={handleChange}>
-                            {programas.map((programa) => (
-                                <MenuItem key={programa} value={programa}>{programa}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-
-                    <FormControl sx={{ margin: '10px' }}>
-                        <InputLabel>Campus</InputLabel>
-                        <Select name="campus" value={formData.campus} label="Campus" onChange={handleChange}>
-                            {campus.map((campus) => (
-                                <MenuItem key={campus} value={campus}>{campus}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
+                    <Controller
+                        name="programa"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <FormControl sx={{ margin: '10px' }}>
+                                <InputLabel>Programa</InputLabel>
+                                <Select {...field} label="Programa" required>
+                                    {programas.map((programa) => (
+                                        <MenuItem key={programa} value={programa}>{programa}</MenuItem>
+                                    ))}
+                                </Select>
+                                {fieldState.error && <Typography color="error">{fieldState.error.message}</Typography>}
+                            </FormControl>
+                        )}
+                    />
+                    <Controller
+                        name="campus"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <FormControl sx={{ margin: '10px' }}>
+                                <InputLabel>Campus</InputLabel>
+                                <Select {...field} label="Campus" required>
+                                    {campus.map((campusOption) => (
+                                        <MenuItem key={campusOption} value={campusOption}>{campusOption}</MenuItem>
+                                    ))}
+                                </Select>
+                                {fieldState.error && <Typography color="error">{fieldState.error.message}</Typography>}
+                            </FormControl>
+                        )}
+                    />
                 </>
             )}
 
-            {formData.tipoAsis === 'SECTOR_EXTERNO' && (
+            {tipoAsis === 'SECTOR_EXTERNO' && (
                 <>
-                    <FormControl sx={{ margin: '10px'}}>
-                        <InputLabel>Tipo de Sector</InputLabel>
-                        <Select label="Tipo de Sector" name="tipoSector" value={formData.tipoSector} onChange={handleChange}>
-                            <MenuItem value="PUBLICO">Empresa pública</MenuItem>
-                            <MenuItem value="PRIVADO">Empresa Privada</MenuItem>
-                            <MenuItem value="INDEPENDIENTE">Independiente</MenuItem>
-                        </Select>
-                    </FormControl>
-                    
-                    <FormControl sx={{ margin: '10px' }}>
-                        <TextField label="Nombre de la Empresa" name="empresaNombre" value={formData.empresaNombre} onChange={handleChange} />
-                    </FormControl>
+                <Controller
+                        name="tipoSector"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <FormControl sx={{ margin: '10px' }}>
+                                <InputLabel>Tipo de Sector</InputLabel>
+                                <Select {...field} label="Tipo de Sector" required>
+                                    <MenuItem value="PUBLICO">Público</MenuItem>
+                                    <MenuItem value="PRIVADO">Privado</MenuItem>
+                                </Select>
+                                {fieldState.error && <Typography color="error">{fieldState.error.message}</Typography>}
+                            </FormControl>
+                        )}
+                    />
+                    <Controller
+                        name="empresaNombre"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <FormControl sx={{ margin: '10px' }}>
+                                <TextField {...field} label="Nombre de la Empresa" error={!!fieldState.error} helperText={fieldState.error?.message} />
+                            </FormControl>
+                        )}
+                    />
                 </>
             )}
 
-            <FormControl sx={{ margin: '10px' }}>
-                <TextField label="Contacto 1" name="contac1" value={formData.contac1} onChange={handleChange} />
-            </FormControl>
+            <Controller
+                name="contac1"
+                control={control}
+                render={({ field, fieldState }) => (
+                    <FormControl sx={{ margin: '10px' }}>
+                        <TextField {...field} label="Número de Contacto 1" error={!!fieldState.error} helperText={fieldState.error?.message} required />
+                    </FormControl>
+                )}
+            />
 
-            <FormControl sx={{ margin: '10px' }}>
-                <TextField label="Contacto 2" name="contacto2" value={formData.contacto2} onChange={handleChange} />
-            </FormControl>
-            <Button type="submit" variant="contained">Guardar</Button>
+            <Controller
+                name="contacto2"
+                control={control}
+                render={({ field, fieldState }) => (
+                    <FormControl sx={{ margin: '10px' }}>
+                        <TextField {...field} label="Número de Contacto 2" error={!!fieldState.error} helperText={fieldState.error?.message} />
+                    </FormControl>
+                )}
+            />
+
+            <Button type="submit" variant="contained" sx={{ margin: '10px' }}>Registrar</Button>
+
+            <ToastContainer />
         </Box>
     );
 }
