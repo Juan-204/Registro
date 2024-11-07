@@ -23,6 +23,11 @@ const schema = yup.object().shape({
         .required("El número de documento es obligatorio")
         .matches(/^[0-9]+$/, "Debe ser un número válido")
         .min(6, "Debe tener al menos 6 dígitos"),
+
+    correo: yup
+        .string()
+        .email("Debe ser un correo electrónico válido")
+        .required("El correo electrónico es obligatorio"),
     
     tipoAsis: yup
         .string()
@@ -103,6 +108,7 @@ function Registro() {
             nombre: '',
             tipoDocu: '',
             numeroDocu: '',
+            correo: '',
             tipoAsis: '',
             institucion: '',
             programa: '',
@@ -146,6 +152,7 @@ function Registro() {
                         name: data.nombre,
                         document_type: data.tipoDocu,
                         document_number: data.numeroDocu,
+                        email: data.correo,
                         assistant_type: data.tipoAsis,
                         program: data.programa,
                         campus: data.campus,
@@ -209,6 +216,16 @@ function Registro() {
                 render={({ field, fieldState }) => (
                     <FormControl sx={{ margin: '10px' }}>
                         <TextField {...field} label="Número de Documento" error={!!fieldState.error} helperText={fieldState.error?.message} required />
+                    </FormControl>
+                )}
+            />
+
+            <Controller
+                name="correo"
+                control={control}
+                render={({ field, fieldState }) => (
+                    <FormControl sx={{ margin: '10px' }}>
+                        <TextField {...field} label="Correo Electrónico" error={!!fieldState.error} helperText={fieldState.error?.message} required />
                     </FormControl>
                 )}
             />
