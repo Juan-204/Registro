@@ -117,36 +117,53 @@ function Registro() {
     const tipoAsis = watch("tipoAsis");
 
     const onSubmit = async (data) => {
-        toast.loading("Enviando datos...");
+        const verificando = (toast.loading("Verificando documento..."));
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users`, {
+            // Verificar si el usuario con la cédula ya está registrado
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/buscar-usuario`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    name: data.nombre,
-                    document_type: data.tipoDocu,
-                    document_number: data.numeroDocu,
-                    assistant_type: data.tipoAsis,
-                    program: data.programa,
-                    campus: data.campus,
-                    institution: data.institucion,
-                    type_sector: data.tipoSector,
-                    name_enterprise: data.empresaNombre,
-                    contac1: data.contac1,
-                    contact_2: data.contacto2,
+                    numeroDocu: data.numeroDocu
                 }),
             });
 
-            toast.dismiss();
-
             if (response.ok) {
-                toast.success("Usuario registrado con éxito");
-                reset();
+                const user = await response.json();
+                toast.error("El número de documento ya está registrado.");
+                toast.dismiss(verificando)
             } else {
-                throw new Error("Error al registrar el usuario");
+                // Si no existe, proceder a registrar el nuevo usuario
+                const registerResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: data.nombre,
+                        document_type: data.tipoDocu,
+                        document_number: data.numeroDocu,
+                        assistant_type: data.tipoAsis,
+                        program: data.programa,
+                        campus: data.campus,
+                        institution: data.institucion,
+                        type_sector: data.tipoSector,
+                        name_enterprise: data.empresaNombre,
+                        contac1: data.contac1,
+                        contact_2: data.contacto2,
+                    }),
+                });
+
+                toast.dismiss();
+                if (registerResponse.ok) {
+                    toast.success("Usuario registrado con éxito");
+                    reset();
+                } else {
+                    throw new Error("Error al registrar el usuario");
+                }
             }
         } catch (error) {
             toast.error(error.message);
@@ -154,6 +171,9 @@ function Registro() {
     };
 
     return (
+        <>
+        <ToastContainer
+        pauseOnHover/>
         <Box className="shadow-2xl rounded-2xl flex flex-col w-[40rem]" component="form" onSubmit={handleSubmit(onSubmit)}>
             <Typography className="text-4xl">Asistencia Eventos Univalle</Typography>
 
@@ -308,9 +328,8 @@ function Registro() {
             />
 
             <Button type="submit" variant="contained" sx={{ margin: '10px' }}>Registrar</Button>
-
-            <ToastContainer />
         </Box>
+        </>
     );
 }
 
