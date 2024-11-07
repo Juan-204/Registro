@@ -21,7 +21,7 @@ app.post('/api/users', async (req, res) => {
   const { name, document_type, document_number, email , assistant_type, program, campus, institution, type_sector, name_enterprise, contac1, contact_2 } = req.body;  
   try {
     const result = await pool.query(
-      'INSERT INTO users (name, document_type, document_number, email , assistant_type, program, campus, institution, type_sector, name_enterprise, contac1, contact_2) VALUES ($1, $2, $3, $4, $5 , $6, $7, $8, $9, $10, $11)',
+      'INSERT INTO users (name, document_type, document_number, email , assistant_type, program, campus, institution, type_sector, name_enterprise, contac1, contact_2) VALUES ($1, $2, $3, $4, $5 , $6, $7, $8, $9, $10, $11, $12)',
       [name, document_type, document_number, email, assistant_type, program, campus, institution, type_sector, name_enterprise, contac1, contact_2]
     );
     
