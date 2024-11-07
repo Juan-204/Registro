@@ -363,7 +363,7 @@ function Registro() {
 
 
 <footer className="m-4">
-<Typography class='text-5xl text-white'>Invitan</Typography>
+<Typography class='text-3xl text-white'>Invitan:</Typography>
     <Box class="flex space-x-3 w-full mx-auto items-center max-w-screen-xl p-4 md:flex md:items-center md:flex-wrap md:justify-between">
         <div><img src={LogoTDS} className="bg-white w-20 h-auto"></img></div>
         <div><img src={LogoING} className="w-14 h-auto "></img></div>
