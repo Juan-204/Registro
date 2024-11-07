@@ -5,6 +5,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../App.css';
+import LogoTDS from '../img/LOGO_TDS.png'
+import LogoING from '../img/Facultad_Ing.jpeg'
+import LogoGIIDCE from '../img/GIIDCE.jpeg'
+import LogoNASA from '../img/Nasa.jpeg'
+import LogoAGRO from '../img/Tecno_Agro.jpeg'
 
 // Esquema de validación usando Yup
 const schema = yup.object().shape({
@@ -354,6 +359,21 @@ function Registro() {
 
             <Button type="submit" variant="contained" sx={{ margin: '10px' }}>Registrar</Button>
         </Box>
+
+
+
+<footer className="bg-white rounded-lg shadow m-4 dark:bg-gray-800">
+    <Box class="flex flex-col space-y-3 w-full mx-auto items-center max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
+        <Typography class='text-5xl text-white'>Invitan</Typography>
+        <img src={LogoTDS} className="w-48 h-auto"></img>
+        <img src={LogoING} className="w-48 h-auto"></img>
+        <img src={LogoGIIDCE} className="w-48 h-auto"></img>
+        <img src={LogoNASA} className="w-48 h-auto"></img>
+        <img src={LogoAGRO} className="w-48 h-auto"></img>
+    </Box>
+</footer>
+
+
         </>
     );
 }
