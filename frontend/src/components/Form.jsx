@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../App.css';
 import LogoTDS from '../img/LOGO_TDS.png'
 import LogoING from '../img/Facultad_Ing.jpeg'
-import LogoGIIDCE from '../img/GIIDCE.jpeg'
+import LogoGIIDCE from '../img/GIIDCE.png'
 import LogoNASA from '../img/Nasa.jpeg'
 import LogoAGRO from '../img/Tecno_Agro.jpeg'
 
@@ -362,14 +362,14 @@ function Registro() {
 
 
 
-<footer className="bg-white rounded-lg shadow m-4 dark:bg-gray-800">
-    <Box class="flex flex-col space-y-3 w-full mx-auto items-center max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-        <Typography class='text-5xl text-white'>Invitan</Typography>
-        <img src={LogoTDS} className="w-48 h-auto"></img>
-        <img src={LogoING} className="w-48 h-auto"></img>
-        <img src={LogoGIIDCE} className="w-48 h-auto"></img>
-        <img src={LogoNASA} className="w-48 h-auto"></img>
-        <img src={LogoAGRO} className="w-48 h-auto"></img>
+<footer className="m-4">
+<Typography class='text-5xl text-white'>Invitan</Typography>
+    <Box class="flex space-x-3 w-full mx-auto items-center max-w-screen-xl p-4 md:flex md:items-center md:flex-wrap md:justify-between">
+        <div><img src={LogoTDS} className="bg-white w-20 h-auto"></img></div>
+        <div><img src={LogoING} className="w-14 h-auto "></img></div>
+        <div><img src={LogoGIIDCE} className="w-20 h-auto"></img></div>
+        <div><img src={LogoNASA} className="w-20 h-auto"></img></div>
+        <div><img src={LogoAGRO} className="w-[75px] h-auto"></img></div>
     </Box>
 </footer>
 
