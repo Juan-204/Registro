@@ -56,7 +56,15 @@ app.post('/buscar-usuario', async (req, res) => {
   }
 });
 
-
+app.get('/api/listar', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM users');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Error al obtener datos' });
+  }
+});
 
 
 // Configurar el puerto
