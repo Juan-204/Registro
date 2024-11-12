@@ -2,6 +2,7 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Registro from './components/Form';
 import CheckList from './components/CheckList'
+import List from './components/List'
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Registro/>} />
         <Route path='/checklist' element={<CheckList/>} />
+        <Route path='/list' element={<List/>} />
       </Routes>
     </Router>
 
