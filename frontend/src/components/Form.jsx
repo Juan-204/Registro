@@ -26,7 +26,7 @@ const schema = yup.object().shape({
         .string()
         .required("El número de documento es obligatorio")
         .matches(/^[0-9]+$/, "Debe ser un número válido")
-        .min(6, "Debe tener al menos 6 dígitos"),
+        .min(6, "Debe tener al menos 8 dígitos"),
 
     correo: yup
         .string()
@@ -66,7 +66,7 @@ const schema = yup.object().shape({
     tipoSector: yup
         .string()
         .when("tipoAsis", (tipoAsis, schema) =>
-            tipoAsis === "SECTOR_EXTERNO"
+            tipoAsis === "SECTOR"
                 ? schema.required("Seleccione un tipo de sector")
                 : schema.notRequired()
         ),
@@ -74,7 +74,7 @@ const schema = yup.object().shape({
     empresaNombre: yup
         .string()
         .when("tipoAsis", (tipoAsis, schema) =>
-            tipoAsis === "SECTOR_EXTERNO"
+            tipoAsis === "SECTOR"
                 ? schema
                     .required("El nombre de la empresa es obligatorio")
                     .matches(/^[A-Za-z\s]+$/, "Solo se permiten letras en el nombre de la empresa")
@@ -327,7 +327,7 @@ function Registro() {
                     />
                 )}
 
-            {tipoAsis === 'SECTOR_EXTERNO' && (
+            {tipoAsis === 'SECTOR' && (
                 <>
                 <Controller
                         name="tipoSector"
