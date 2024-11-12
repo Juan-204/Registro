@@ -1,12 +1,11 @@
 import { useState } from 'react';
-import { TextField, Button, Typography, Box, Radio, FormControlLabel } from '@mui/material';
-import '../App.css';
+import { TextField, Button, Typography, Box } from '@mui/material';
 
 function BuscarUsuario() {
     const [cedulaBusqueda, setCedulaBusqueda] = useState('');
     const [usuarioEncontrado, setUsuarioEncontrado] = useState(null);
-    const [checked, setChecked] = useState(false);  // Estado del checkbox de asistencia
     const [mensajeError, setMensajeError] = useState('');
+    const [asistencia, setAsistencia] = useState('No_asistio'); // Estado inicial
 
     const handleBusqueda = async () => {
         try {
@@ -24,8 +23,9 @@ function BuscarUsuario() {
                     nombre: usuario.name,
                     tipoDocu: usuario.document_type,
                     numeroDocu: usuario.document_number,
-                    asistencia: usuario.asistencia, // También tomamos el estado de asistencia
+                    asistencia: usuario.asistencia, // Mantenemos el estado de asistencia para mostrarlo
                 });
+                setAsistencia(usuario.asistencia);  // Establecemos el estado inicial
                 setMensajeError('');
             } else {
                 setUsuarioEncontrado(null);
@@ -44,8 +44,9 @@ function BuscarUsuario() {
         }
     };
 
-    // Función para actualizar el estado de asistencia
-    const handleAsistenciaChange = async () => {
+    const handleActualizarAsistencia = async () => {
+        const nuevoEstadoAsistencia = asistencia === 'No_asistio' ? 'Asistio' : 'No_asistio'; // Alternamos el estado
+
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/actualizar-asistencia`, {
                 method: 'POST',
@@ -54,28 +55,30 @@ function BuscarUsuario() {
                 },
                 body: JSON.stringify({
                     cedula: cedulaBusqueda,
-                    estadoAsistencia: checked,  // Enviamos el estado booleano
+                    estadoAsistencia: nuevoEstadoAsistencia,  // Enviamos el nuevo estado
                 }),
             });
-    
+
+            const result = await response.json();
             if (response.ok) {
-                const result = await response.json();
-                console.log(result.message); // Mensaje de éxito
-                setUsuarioEncontrado((prev) => ({
-                    ...prev,
-                    asistencia: checked ? 'Asistio' : 'No_asistio',
-                })); // Actualizamos el estado de asistencia en el frontend
+                setAsistencia(nuevoEstadoAsistencia); // Actualizamos el estado de asistencia en el frontend
+                alert(result.message); // Muestra el mensaje de éxito
+                setCedulaBusqueda('');
+                setUsuarioEncontrado(null);
+                setMensajeError('');
             } else {
-                console.error('Error al actualizar la asistencia');
+                alert(result.error);
+                setCedulaBusqueda('');
+                setUsuarioEncontrado(null);
+                setMensajeError('');
             }
         } catch (error) {
             console.error('Error al actualizar la asistencia:', error);
         }
     };
-    
 
     return (
-        <Box component="form" className="shadow-2xl">
+        <Box component="form" className="flex items-center flex-col shadow-2xl">
             <Typography className="text-4xl">Buscar Usuario por Cédula</Typography>
 
             <TextField
@@ -99,20 +102,23 @@ function BuscarUsuario() {
             {mensajeError && <Typography color="error">{mensajeError}</Typography>}
 
             {usuarioEncontrado && (
-                <Box sx={{ marginTop: 2 }}>
+                <Box className="flex items-center flex-col m-3 w-auto h-auto">
                     <Typography>Usuario Encontrado:</Typography>
                     <Typography>Nombre: {usuarioEncontrado.nombre}</Typography>
                     <Typography>Tipo de Documento: {usuarioEncontrado.tipoDocu}</Typography>
                     <Typography>Cédula: {usuarioEncontrado.numeroDocu}</Typography>
-                    <Typography>Estado de Asistencia: {usuarioEncontrado.asistencia}</Typography>
 
-                    <FormControlLabel
-                        control={<Radio checked={checked} onChange={() => { 
-                            setChecked(!checked); 
-                            handleAsistenciaChange(); // Llamamos a la función para actualizar la asistencia
-                        }} />}
-                        label="Asistió"
-                    />
+                    {/* Aquí mostramos el estado actual de asistencia */}
+                    <Typography>Estado de Asistencia: {asistencia === 'Asistio' ? 'Asistió' : 'No Asistió'}</Typography>
+
+                    {/* Botón para alternar el estado de asistencia */}
+                    <Button 
+                        variant="contained"
+                        onClick={handleActualizarAsistencia}
+                        sx={{ marginTop: 1, fontSize: '15px', width: 'auto' }}
+                    >
+                        Marcar Asistencia
+                    </Button>
                 </Box>
             )}
         </Box>
