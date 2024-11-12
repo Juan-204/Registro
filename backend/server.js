@@ -1,4 +1,4 @@
-// backend/server.js
+
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
@@ -21,6 +21,7 @@ app.post('/api/users', async (req, res) => {
   const { name, document_type, document_number, email , assistant_type, program, campus, institution, type_sector, name_enterprise, contac1, contact_2 } = req.body;  
   
   const checkEmail = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+  //verificar email registrado
 
   if (checkEmail.rows.length > 0) {
     return res.status(400).json({ error: 'El correo electrónico ya está registrado' });
@@ -56,6 +57,7 @@ app.post('/buscar-usuario', async (req, res) => {
   }
 });
 
+//End Point para listar todos los datos
 app.get('/api/listar', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM users');
@@ -68,7 +70,6 @@ app.get('/api/listar', async (req, res) => {
 
 
 // Endpoint para actualizar el estado de asistencia
-// backend/server.js
 
 app.post('/api/actualizar-asistencia', async (req, res) => {
   const { cedula, estadoAsistencia } = req.body;  // Recibimos cédula y estado de asistencia (true o false)
