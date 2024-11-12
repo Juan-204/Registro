@@ -67,6 +67,30 @@ app.get('/api/listar', async (req, res) => {
 });
 
 
+// Endpoint para actualizar el estado de asistencia
+app.post('/api/actualizar-asistencia', async (req, res) => {
+  const { cedula, estadoAsistencia } = req.body;  // Recibimos cédula y el estado de asistencia (true o false)
+
+  try {
+    // Actualizamos el estado de asistencia en la base de datos
+    const result = await pool.query(
+      'UPDATE users SET asistencia = $1 WHERE document_number = $2 RETURNING *',
+      [estadoAsistencia ? 'Asistio' : 'No_asistio', cedula]
+    );
+
+    if (result.rows.length > 0) {
+      res.json({ message: 'Estado de asistencia actualizado', usuario: result.rows[0] });
+    } else {
+      res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+  } catch (error) {
+    console.error('Error al actualizar la asistencia:', error);
+    res.status(500).json({ error: 'Error al actualizar la asistencia' });
+  }
+});
+
+
+
 // Configurar el puerto
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
