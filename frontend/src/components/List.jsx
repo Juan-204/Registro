@@ -70,10 +70,11 @@ const ListaUsuarios = () => {
         <table className="min-w-full bg-white shadow-md rounded-lg">
           <thead className="bg-blue-500 text-white">
             <tr>
-              <th className="py-3 px-6 text-left">#</th> {/* Nuevo encabezado para el ID */}
+              <th className="py-3 px-6 text-left">#</th>
               <th className="py-3 px-6 text-left">Nombre</th>
-              <th className="py-3 px-6 text-left">Correo</th>
-              <th className="py-3 px-6 text-left">Documento</th>
+              <th className="py-3 px-6 text-left">Tipo de Documento</th>
+              <th className="py-3 px-6 text-left"># de Documento</th>
+              <th className="py-3 px-6 text-left">Tipo de Asistente</th>
               <th className="py-3 px-6 text-left">Programa</th>
               <th className="py-3 px-6 text-left">Campus</th>
               <th className="py-3 px-6 text-left">Institucion</th>
@@ -91,9 +92,10 @@ const ListaUsuarios = () => {
                 {/* El ID es generado de manera secuencial empezando en 1 */}
                 <td className="py-3 px-6 border-b border-gray-200">{index + 1 + (paginaActual - 1) * usuariosPorPagina}</td>
                 <td className="py-3 px-6 border-b border-gray-200">{usuario.name}</td>
-                <td className="py-3 px-6 border-b border-gray-200">{usuario.email}</td>
+                <td className="py-3 px-6 border-b border-gray-200">{usuario.document_type}</td>
                 <td className="py-3 px-6 border-b border-gray-200">{usuario.document_number}</td>
                 <td className="py-3 px-6 border-b border-gray-200">{usuario.assistant_type}</td>
+                <td className="py-3 px-6 border-b border-gray-200">{usuario.program}</td>
                 <td className="py-3 px-6 border-b border-gray-200">{usuario.campus}</td>
                 <td className="py-3 px-6 border-b border-gray-200">{usuario.institution}</td>
                 <td className="py-3 px-6 border-b border-gray-200">{usuario.type_sector}</td>

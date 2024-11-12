@@ -127,8 +127,8 @@ function Registro() {
     const tipoAsis = watch("tipoAsis");
 
     const onSubmit = async (data) => {
-        const verificando = (toast.loading("Verificando documento..."));
-
+        const verificando = toast.loading("Verificando documento...");
+    
         try {
             // Verificar si el usuario con la cédula ya está registrado
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/buscar-usuario`, {
@@ -140,13 +140,18 @@ function Registro() {
                     numeroDocu: data.numeroDocu
                 }),
             });
-
+    
             if (response.ok) {
                 const user = await response.json();
-                console.log(user)
+                console.log(user);
                 toast.error("El número de documento ya está registrado.");
-                toast.dismiss(verificando)
+                toast.dismiss(verificando);
             } else {
+                // Si el tipo de asistente es ESCOLAR, asignamos el valor del colegio a programa
+                if (data.tipoAsis === "COLEGIO") {
+                    data.programa = data.colegio;
+                }
+    
                 // Si no existe, proceder a registrar el nuevo usuario
                 const registerResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/users`, {
                     method: 'POST',
@@ -168,27 +173,27 @@ function Registro() {
                         contact_2: data.contacto2,
                     }),
                 });
-
+    
                 toast.dismiss();
                 if (registerResponse.ok) {
                     toast.success("Usuario registrado con éxito");
                     reset();
                 } else {
                     const errorData = await registerResponse.json();
-                    if(errorData.error === 'El correo electrónico ya está registrado'){
-                        toast.error("El correo electronico ya esta registrado")
-                    }else {
-                        toast.error("Error al registrar el usuario")
-                        //throw new Error("Error al registrar el usuario");
+                    if (errorData.error === 'El correo electrónico ya está registrado') {
+                        toast.error("El correo electrónico ya está registrado");
+                    } else {
+                        toast.error("Error al registrar el usuario");
                     }
                 }
             }
         } catch (error) {
             toast.dismiss();
-            console.log(error)
+            console.log(error);
             toast.error("Hubo un error al procesar la solicitud");
         }
     };
+    
 
     return (
         <>
@@ -250,12 +255,13 @@ function Registro() {
                     <FormControl sx={{ margin: '10px' }} error={!!fieldState.error}>
                         <InputLabel>Tipo de Asistente</InputLabel>
                         <Select {...field} label="Tipo de Asistente" required>
-                            <MenuItem value="ESTUDIANTE">Estudiante</MenuItem>
+                            <MenuItem value="UNIVERSITARIO">Estudiante Universitario</MenuItem>
+                            <MenuItem value="COLEGIO">Estudiante Bachiller</MenuItem>
                             <MenuItem value="DOCENTE">Docente</MenuItem>
                             <MenuItem value="EXPOSITOR">Expositor</MenuItem>
                             <MenuItem value="PONENTE">Ponente</MenuItem>
                             <MenuItem value="LOGISTICA">Logística</MenuItem>
-                            <MenuItem value="SECTOR_EXTERNO">Sector Externo</MenuItem>
+                            <MenuItem value="SECTOR">Tipo de Externo</MenuItem>
                         </Select>
                         {fieldState.error && <Typography color="error">{fieldState.error.message}</Typography>}
                     </FormControl>
@@ -274,7 +280,7 @@ function Registro() {
                 />
             )}
 
-            {tipoAsis === 'ESTUDIANTE' && (
+            {tipoAsis === 'UNIVERSITARIO' && (
                 <>
                     <Controller
                         name="programa"
@@ -308,6 +314,18 @@ function Registro() {
                     />
                 </>
             )}
+
+                {tipoAsis === 'COLEGIO' && (
+                    <Controller
+                        name="colegio"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <FormControl sx={{ margin: '10px' }}>
+                                <TextField {...field} label="Nombre del Colegio" error={!!fieldState.error} helperText={fieldState.error?.message} required />
+                            </FormControl>
+                        )}
+                    />
+                )}
 
             {tipoAsis === 'SECTOR_EXTERNO' && (
                 <>
