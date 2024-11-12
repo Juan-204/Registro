@@ -54,13 +54,17 @@ function BuscarUsuario() {
                 },
                 body: JSON.stringify({
                     cedula: cedulaBusqueda,
-                    estadoAsistencia: checked,  // Enviamos el estado del radio button
+                    estadoAsistencia: checked,  // Enviamos el estado booleano
                 }),
             });
-
+    
             if (response.ok) {
                 const result = await response.json();
                 console.log(result.message); // Mensaje de éxito
+                setUsuarioEncontrado((prev) => ({
+                    ...prev,
+                    asistencia: checked ? 'Asistio' : 'No_asistio',
+                })); // Actualizamos el estado de asistencia en el frontend
             } else {
                 console.error('Error al actualizar la asistencia');
             }
@@ -68,6 +72,7 @@ function BuscarUsuario() {
             console.error('Error al actualizar la asistencia:', error);
         }
     };
+    
 
     return (
         <Box component="form" className="shadow-2xl">
