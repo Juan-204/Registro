@@ -23,7 +23,8 @@ function BuscarUsuario() {
                     nombre: usuario.name,
                     tipoDocu: usuario.document_type,
                     numeroDocu: usuario.document_number,
-                    asistencia: usuario.asistencia, // Mantenemos el estado de asistencia para mostrarlo
+                    asistencia: usuario.asistencia, 
+                    programa: usuario.program// Mantenemos el estado de asistencia para mostrarlo
                 });
                 setAsistencia(usuario.asistencia);  // Establecemos el estado inicial
                 setMensajeError('');
@@ -105,6 +106,7 @@ function BuscarUsuario() {
                 <Box className="flex items-center flex-col m-3 w-auto h-auto">
                     <Typography>Usuario Encontrado:</Typography>
                     <Typography>Nombre: {usuarioEncontrado.nombre}</Typography>
+                    <Typography>Cédula: {usuarioEncontrado.programa}</Typography>
                     <Typography>Tipo de Documento: {usuarioEncontrado.tipoDocu}</Typography>
                     <Typography>Cédula: {usuarioEncontrado.numeroDocu}</Typography>
 
