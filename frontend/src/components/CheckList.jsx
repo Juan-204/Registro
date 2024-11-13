@@ -106,7 +106,7 @@ function BuscarUsuario() {
                 <Box className="flex items-center flex-col m-3 w-auto h-auto">
                     <Typography>Usuario Encontrado:</Typography>
                     <Typography>Nombre: {usuarioEncontrado.nombre}</Typography>
-                    <Typography>Cédula: {usuarioEncontrado.programa}</Typography>
+                    <Typography>Programa: {usuarioEncontrado.programa}</Typography>
                     <Typography>Tipo de Documento: {usuarioEncontrado.tipoDocu}</Typography>
                     <Typography>Cédula: {usuarioEncontrado.numeroDocu}</Typography>
 
